@@ -14,7 +14,7 @@ var outOut = [];
 var img = [16];
 for (var i = 0; i < 16; i++) {
 	img[i] = new Image(); // Create new img element
-	img[i].src = 'tri-' + (i < 10 ? '0' : '') + i + '.png'; // Set source path
+	img[i].src = 'images/tri-' + (i < 10 ? '0' : '') + i + '.png'; // Set source path
 	
 }
 
