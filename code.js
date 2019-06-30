@@ -9,7 +9,7 @@ var meshWidth, meshHeight;
 var meshArray;
 
 var inOut = [];
-var outOut = [];
+//var outOut = [];
 
 var img = [16];
 for (var i = 0; i < 16; i++) {
@@ -137,7 +137,7 @@ function scan (){
 				drawPixel (x, y, 1, 1, 255, 255); //immediately pixel: value 1, +visited: temp
 				inOut = [new coords(x,y)]; //start the stack with the first pixel
 				
-				outOut = [];
+				//outOut = [];
 				dr = 1;
 				while (inOut.length > 0 ) { //need to test vs "coords.x/.y" not pixel x/y
 					cx = inOut[0].x; //retrieve X and Y co-ords for adjcency tests, from the start of the stack
@@ -164,7 +164,8 @@ function scan (){
 						drawPixel (cx, cy + 1, r + dr, 1, 255, 255);  //set value + 1, set "seen": temp
 					}
 
-					outOut.push(inOut.shift()); //remove front of the stack
+					inOut.shift(); //remove front of the stack
+					//outOut.push(inOut.shift()); //remove front of the stack
 				}
 				
 			}
