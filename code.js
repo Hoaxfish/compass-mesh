@@ -27,7 +27,7 @@ function drawScratch(){
 
 	//ctx.fillStyle = "#FFFFFF";
 	//ctx.fillStyle = "#000000";
-	ctx.fillStyle = "#000400";
+	ctx.fillStyle = "#000400"; // BG color, R and B elements alter colour of whole image
 	ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 	
 	defineMesh();
@@ -47,13 +47,12 @@ function drawScratch(){
 }
 
 // draw a single pixel
-function drawPixel (x, y, r, g, b, a) {
+function drawPixel (x, y, r, g, b) {
     var index = (x + y * canvasWidth) * 4;
-
     canvasData.data[index + 0] = r;
     canvasData.data[index + 1] = g;
     canvasData.data[index + 2] = b;
-    canvasData.data[index + 3] = a;
+    canvasData.data[index + 3] = 255;
 }
 
 function setPixelCC (x, y, i, c) { // set one of r, g, b, or a
@@ -131,10 +130,10 @@ function scan (){
 	for (var y = 0; y < canvasHeight; y++) {
 		for (var x = 0; x < canvasWidth; x++) {
 			r = getPixelCol(x, y, 0); //use pixel colour to see state
-			if (r == 255) { continue; } //jump this iteration if pixel is white
+			if (r == 255) { continue;} //jump this iteration if pixel is white - THIS NEVER FIRES!
 			
 			if (r == 0) { //starting point //on a black pixel
-				drawPixel (x, y, 1, 1, 255, 255); //immediately pixel: value 1, +visited: temp
+				drawPixel (x, y, 1, 1, 255); //immediately pixel: value 1, +visited: temp
 				inOut = [new coords(x,y)]; //start the stack with the first pixel
 				
 				//outOut = [];
@@ -145,23 +144,23 @@ function scan (){
 					r = getPixelCol(cx, cy, 0); // get cell value
 					if (r + dr > 255) { dr = -1; }
 					if (r + dr < 0) { dr = 1; }
-					drawPixel(cx, cy, r, 2, 128, 255); //set cell as "visited"  //using pixel value
+					drawPixel(cx, cy, r, 2, 128); //set cell as "visited"  //using pixel value
 					
 					if (testCell (cx - 1, cy)){ //test west
 						inOut.push(new coords(cx - 1, cy)); //push cell
-						drawPixel (cx - 1, cy, r + dr, 1, 255, 255); //set value + 1, set "seen": temp
+						drawPixel (cx - 1, cy, r + dr, 1, 255); //set value + 1, set "seen": temp
 					}
 					if (testCell (cx + 1, cy)){ //tes east
 						inOut.push(new coords(cx + 1, cy)); //push cell
-						drawPixel (cx + 1, cy, r + dr, 1, 255, 255); //set value + 1, set "seen": temp
+						drawPixel (cx + 1, cy, r + dr, 1, 255); //set value + 1, set "seen": temp
 					}
 					if (testCell (cx, cy - 1)){ //test north
 						inOut.push(new coords(cx, cy - 1)); //push cell
-						drawPixel (cx, cy - 1, r + dr, 1, 255, 255);  //set value + 1, set "seen": temp
+						drawPixel (cx, cy - 1, r + dr, 1, 255);  //set value + 1, set "seen": temp
 					}
 					if (testCell (cx, cy + 1)){ //test south
 						inOut.push(new coords(cx, cy + 1)); //push cell
-						drawPixel (cx, cy + 1, r + dr, 1, 255, 255);  //set value + 1, set "seen": temp
+						drawPixel (cx, cy + 1, r + dr, 1, 255);  //set value + 1, set "seen": temp
 					}
 
 					inOut.shift(); //remove front of the stack
@@ -175,12 +174,8 @@ function scan (){
 
 //test x,y co-ords for borders, etc, and seen/unseen
 function testCell (x, y){
-	if (!(x < 0 || y < 0 || x > canvasWidth || y > canvasHeight)) { //test co-ordinates vs edge of world
-		if (getPixelCol(x, y, 1) == 0) { //if "not touched"/ is black ... neither seen nor visited
-			return true;
-		}
-	}
-	return false;
+	if (x < 0 || y < 0 || x > canvasWidth || y > canvasHeight) { return false; }//test co-ordinates vs edge of world
+	return (getPixelCol(x, y, 1) == 0); //if "not touched"/ is black ... neither seen nor visited
 }
 
 /* 2D grid layout based on binary joins to adjacent cells
